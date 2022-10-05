@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from '../../Components/';
+import { Icon } from '../../Components';
 
 const Input = ({ name, label, ...props }) => {
   return (
@@ -17,7 +17,7 @@ const Input = ({ name, label, ...props }) => {
   );
 };
 
-export const Login = () => {
+export const Signup = () => {
   return (
     <div>
       <header className="p-4 border-b border-red-300">
@@ -31,10 +31,24 @@ export const Login = () => {
           <a href="/">
             <Icon name="arrowLeft" className="h-7" />
           </a>
-          <h2 className="text-xl font-bold">Entre na sua conta</h2>
+          <h2 className="text-xl font-bold">Crie a sua conta</h2>
         </div>
 
         <form className="space-y-6 p-4">
+          <Input
+            type="text"
+            name="name"
+            placeholder="Digite seu nome"
+            label="Seu nome"
+          />
+
+          <Input
+            type="text"
+            name="username"
+            placeholder="Digite um nome de usuário"
+            label="Seu nome de usuário"
+          />
+
           <Input
             type="text"
             name="email"
@@ -53,7 +67,7 @@ export const Login = () => {
             href="/signup"
             className="text-white text-center bg-red-300 text-xl px-6 py-3 rounded-xl w-full"
           >
-            Entrar
+            Criar minha conta
           </button>
         </form>
       </main>

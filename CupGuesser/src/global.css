@@ -4,4 +4,5 @@
 
 body {
   font-family: 'Cairo', 'sans-serif';
+  @apply text-red-700;
 }
