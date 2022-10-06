@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 export const Home = () => {
   return (
     <div className="h-screen bg-red-700 p-4  text-white flex flex-col items-center space-y-6">
@@ -9,7 +7,7 @@ export const Home = () => {
       <div className="flex-1 container max-w-6xl p-4 flex flex-col items-center  space-y-6 md:flex-row">
         <div className="md:flex-1 flex justify-center">
           <img
-            src="../public/assets-natrave/imagem/img.png"
+            src="/assets-natrave/imagem/img.png"
             alt="dois torcedores"
             className="w-full max-w-md md:max-w-xl md:px-2"
           />

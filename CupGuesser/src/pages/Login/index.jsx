@@ -1,6 +1,5 @@
 import React from 'react';
-import { Icon } from '../../Components/';
-import Input from '../../Components/input';
+import { Icon, Input } from '../../Components/';
 
 export const Login = () => {
   return (
@@ -34,12 +33,12 @@ export const Login = () => {
             label="Sua senha"
           />
 
-          <button
+          <a
             href="/signup"
-            className="text-white text-center bg-red-300 text-xl px-6 py-3 rounded-xl w-full"
+            className="block text-white text-center bg-red-300 text-xl px-6 py-3 rounded-xl w-full"
           >
             Entrar
-          </button>
+          </a>
         </form>
       </main>
     </div>
