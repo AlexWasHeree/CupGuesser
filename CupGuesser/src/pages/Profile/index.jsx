@@ -1,27 +1,29 @@
 import React from 'react';
+// import { Fragment } from 'react';
 import { Icon, Card } from '../../Components';
 
-export const Dashboard = () => {
+export const Profile = () => {
   return (
     <>
       <header className="bg-red-500 text-white p-4">
         <div className="container max-w-4xl flex justify-between items-center">
           <h1 className="text-white text-xl font-bold">CupGuesser</h1>
-          <a href="/profile">
-            <Icon name="profile" className="w-10 " />
-          </a>
         </div>
       </header>
 
       <main className="space-y-6">
         <section id="header" className="bg-red-500 text-white">
           <div className="container max-w-4xl space-y-2 p-4">
-            <span>Olá Victor!</span>
-            <h3 className="text-2xl">Qual é o seu palpite?</h3>
+            <a href="./dashboard">
+              <Icon name="back" className="w-8" />
+            </a>
+            <h3 className="text-2xl">Victor Alexandre</h3>
           </div>
         </section>
 
         <section id="content" className="container max-w-3xl p-4 space-y-4">
+          <h2 className="text-xl text-red-500 font-bold">Seus palpites</h2>
+
           <div className="flex space-x-4 p-4 items-center justify-center">
             <Icon name="arrowLeft" className="w-6 text-red-500" />
             <span className="font-bold">24 de novembro</span>

@@ -34,7 +34,7 @@ export const Login = () => {
           />
 
           <a
-            href="/signup"
+            href="/dashboard"
             className="block text-white text-center bg-red-300 text-xl px-6 py-3 rounded-xl w-full"
           >
             Entrar
