@@ -1,6 +1,5 @@
 import React from 'react';
-// import { Fragment } from 'react';
-import { Icon, Card } from '../../Components';
+import { Icon, Card, DateSelect } from '../../Components';
 
 export const Profile = () => {
   return (
@@ -24,11 +23,8 @@ export const Profile = () => {
         <section id="content" className="container max-w-3xl p-4 space-y-4">
           <h2 className="text-xl text-red-500 font-bold">Seus palpites</h2>
 
-          <div className="flex space-x-4 p-4 items-center justify-center">
-            <Icon name="arrowLeft" className="w-6 text-red-500" />
-            <span className="font-bold">24 de novembro</span>
-            <Icon name="arrowRight" className="w-6 text-red-500" />
-          </div>
+          <DateSelect />
+
           <div className="space-y-4">
             <Card
               teamA={{
