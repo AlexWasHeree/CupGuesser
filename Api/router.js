@@ -1,15 +1,11 @@
 import Router from '@koa/router';
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import * as users from './app/users/index.js';
+import * as hunches from './app/hunches/index.js';
 
 export const router = new Router();
 
-router.get('/', async (ctx) => {
-  ctx.body = { hello: 'world' };
-});
+router.post('/users', users.create);
+router.get('/users', users.list);
 
-router.get('/users', async (ctx) => {
-  ctx.body = { ola: 'users' };
-});
+router.post('/hunches', hunches.create);
