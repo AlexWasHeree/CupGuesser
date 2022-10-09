@@ -1,4 +1,4 @@
-export const Input = ({ name, label, ...props }) => {
+export const Input = ({ name, label, error, ...props }) => {
   return (
     <div className="flex flex-col">
       <label htmlFor={name} className="text-sm font-bold text-grey-500 mb-2">
@@ -10,6 +10,7 @@ export const Input = ({ name, label, ...props }) => {
         id={name}
         name={name}
       />
+      {error && <span className="p-2 text-red-300 text-sm">{error}</span>}
     </div>
   );
 };
