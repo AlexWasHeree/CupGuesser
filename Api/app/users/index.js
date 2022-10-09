@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 export const create = async (ctx) => {
@@ -12,7 +14,7 @@ export const create = async (ctx) => {
   };
 
   try {
-    const user = await prisma.user.create({ data });
+    const { password, ...user } = await prisma.user.create({ data });
     ctx.body = user;
     ctx.status = 201;
   } catch (error) {
@@ -20,14 +22,41 @@ export const create = async (ctx) => {
     ctx.status = 500;
   }
 };
+//buf.toString('base64')
+//Buffer.from(str, 'base64')
+export const login = async (ctx) => {
+  const [type, token] = ctx.headers.authorization.split(' ');
+  const [email, plainTextPassword] = atob(token).split(':');
 
-export const list = async (ctx) => {
-  try {
-    const users = await prisma.user.findMany();
-    ctx.body = users;
-    ctx.status = 200;
-  } catch (error) {
-    ctx.body = error;
-    ctx.status = 500;
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    ctx.status = 404;
+    return;
   }
+
+  const passwordMatch = await bcrypt.compare(plainTextPassword, user.password);
+
+  if (!passwordMatch) {
+    ctx.status = 404;
+    return;
+  }
+
+  const { paaword, ...result } = user;
+
+  const accesToken = jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      expiresIn: '7d',
+    },
+    process.env.JWT_SECRET,
+  );
+
+  ctx.body = {
+    user: result,
+    accesToken,
+  };
 };
