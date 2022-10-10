@@ -1,12 +1,25 @@
 import React from 'react';
+import { useLocalStorage } from 'react-use';
+import { Navigate } from 'react-router-dom';
 import { Icon, Card, DateSelect } from '../../Components';
 
 export const Profile = () => {
+  const [auth, setAuth] = useLocalStorage('auth', {});
+  if (!auth?.user?.id) {
+    return <Navigate to="/" replace={true} />;
+  }
+
+  const logout = () => {
+    setAuth({});
+  };
   return (
     <>
       <header className="bg-red-500 text-white p-4">
         <div className="container max-w-4xl flex justify-between items-center">
           <h1 className="text-white text-xl font-bold">CupGuesser</h1>
+          <div onClick={logout} className="p-4 cursor-pointer">
+            Sair
+          </div>
         </div>
       </header>
 

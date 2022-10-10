@@ -1,7 +1,14 @@
 import React from 'react';
+import { useLocalStorage } from 'react-use';
+import { Navigate } from 'react-router-dom';
 import { Icon, Card } from '../../Components';
 
 export const Dashboard = () => {
+  const [auth] = useLocalStorage('auth', {});
+  if (!auth?.user?.id) {
+    return <Navigate to="/" replace={true} />;
+  }
+
   return (
     <>
       <header className="bg-red-500 text-white p-4">
