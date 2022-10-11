@@ -40,10 +40,10 @@ export const Profile = () => {
 
           <div className="space-y-4">
             <Card
-              teamA={{
+              homeTeam={{
                 slug: 'sui',
               }}
-              teamB={{
+              awayTeam={{
                 slug: 'cam',
               }}
               match={{
@@ -51,10 +51,10 @@ export const Profile = () => {
               }}
             />
             <Card
-              teamA={{
+              homeTeam={{
                 slug: 'uru',
               }}
-              teamB={{
+              awayTeam={{
                 slug: 'cor',
               }}
               match={{
@@ -62,10 +62,10 @@ export const Profile = () => {
               }}
             />
             <Card
-              teamA={{
+              homeTeam={{
                 slug: 'por',
               }}
-              teamB={{
+              awayTeam={{
                 slug: 'gan',
               }}
               match={{

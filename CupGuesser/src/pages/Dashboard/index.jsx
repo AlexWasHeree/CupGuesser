@@ -1,20 +1,30 @@
 import React from 'react';
-import { useAsync, useLocalStorage } from 'react-use';
+import { useAsync, useLocalStorage, useAsyncFn } from 'react-use';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, formatISO } from 'date-fns';
 import { Icon, Card, DateSelect } from '../../Components';
 
 export const Dashboard = () => {
+  const [currentDate, setDate] = React.useState(
+    formatISO(new Date(2022, 10, 20)),
+  );
   const [auth] = useLocalStorage('auth', {});
-  const state = useAsync(async () => {
+
+  const [games, fetchGames] = useAsyncFn(async (params) => {
     const res = await axios({
       method: 'get',
       baseURL: 'http://localhost:3000',
       url: '/game',
+      params,
     });
+
     return res.data;
   });
+
+  React.useEffect(() => {
+    fetchGames({ gameTime: currentDate });
+  }, [currentDate]);
 
   if (!auth?.user?.id) {
     return <Navigate to="/" replace={true} />;
@@ -40,23 +50,22 @@ export const Dashboard = () => {
         </section>
 
         <section id="content" className="container max-w-3xl p-4 space-y-4">
-          <DateSelect />
+          <DateSelect currentDate={currentDate} onChange={setDate} />
 
           <div className="space-y-4">
-            {state.loading && 'Carregando...'}
-            {state.error && 'Ops, algo deu errado.'}
-            {!state.loading &&
-              !state.error &&
-              state.value.map((game, idx) => {
-                return (
-                  <Card
-                    key={`id-${idx}`}
-                    homeTeam={{ slug: game.homeTeam }}
-                    awayTeam={{ slug: game.awayTeam }}
-                    match={{ time: format(new Date(game.gameTime), 'H:mm') }}
-                  />
-                );
-              })}
+            {games.loading && 'Carregando...'}
+            {games.error && 'Ops, algo deu errado.'}
+            {!games.loading &&
+              !games.error &&
+              games.value?.map((game) => (
+                <Card
+                  key={game.id}
+                  gameId={game.id}
+                  homeTeam={game.homeTeam}
+                  awayTeam={game.awayTeam}
+                  gameTime={format(new Date(game.gameTime), 'H:mm')}
+                />
+              ))}
           </div>
         </section>
       </main>
