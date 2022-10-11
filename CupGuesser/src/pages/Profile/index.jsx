@@ -1,10 +1,15 @@
 import React from 'react';
 import { useLocalStorage } from 'react-use';
 import { Navigate } from 'react-router-dom';
+import { formatISO } from 'date-fns';
 import { Icon, Card, DateSelect } from '../../Components';
 
 export const Profile = () => {
+  const [currentDate, setDate] = React.useState(
+    formatISO(new Date(2022, 10, 20)),
+  );
   const [auth, setAuth] = useLocalStorage('auth', {});
+
   if (!auth?.user?.id) {
     return <Navigate to="/" replace={true} />;
   }
@@ -36,42 +41,10 @@ export const Profile = () => {
         <section id="content" className="container max-w-3xl p-4 space-y-4">
           <h2 className="text-xl text-red-500 font-bold">Seus palpites</h2>
 
-          <DateSelect />
+          <DateSelect currentDate={currentDate} onChange={setDate} />
 
           <div className="space-y-4">
-            <Card
-              homeTeam={{
-                slug: 'sui',
-              }}
-              awayTeam={{
-                slug: 'cam',
-              }}
-              match={{
-                time: '7:00',
-              }}
-            />
-            <Card
-              homeTeam={{
-                slug: 'uru',
-              }}
-              awayTeam={{
-                slug: 'cor',
-              }}
-              match={{
-                time: '10:00',
-              }}
-            />
-            <Card
-              homeTeam={{
-                slug: 'por',
-              }}
-              awayTeam={{
-                slug: 'gan',
-              }}
-              match={{
-                time: '8:00',
-              }}
-            />
+            <Card homeTeam={'sui'} awayTeam={'cam'} gamTime={'7:00'} />
           </div>
         </section>
       </main>
