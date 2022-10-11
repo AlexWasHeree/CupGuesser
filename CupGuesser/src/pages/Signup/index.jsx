@@ -25,7 +25,7 @@ export const Signup = () => {
         data: values,
       });
 
-      window.localStorage.setItem('auth', JSON.stringify(res.data));
+      setAuth(res.data);
     },
     initialValues: {
       name: '',
