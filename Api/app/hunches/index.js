@@ -3,21 +3,24 @@ import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 
 export const create = async (ctx) => {
+  const [type, token] = ctx.headers.authorization.split(' ');
+
   if (!ctx.headers.authorization) {
     ctx.status = 401;
     return;
   }
-  const [type, token] = ctx.headers.authorization.split(' ');
 
   try {
     const data = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(data);
 
     if (!ctx.request.body.homeTeamScore && !ctx.request.body.awayTeamScore) {
       ctx.status = 400;
+
       return;
     }
 
-    const userId = data.sub;
+    const userId = data.id;
     const { gameId } = ctx.request.body;
     const homeTeamScore = parseInt(ctx.request.body.homeTeamScore);
     const awayTeamScore = parseInt(ctx.request.body.awayTeamScore);
@@ -51,6 +54,7 @@ export const create = async (ctx) => {
 
       ctx.status = 200;
     } catch (error) {
+      console.log(error);
       ctx.body = error;
       ctx.status = 500;
     }
