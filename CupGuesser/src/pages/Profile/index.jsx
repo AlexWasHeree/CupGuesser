@@ -1,28 +1,69 @@
 import React from 'react';
-import { useLocalStorage } from 'react-use';
+import { useLocalStorage, useAsyncFn } from 'react-use';
+import axios from 'axios';
 import { Navigate } from 'react-router-dom';
-import { formatISO } from 'date-fns';
+import { format, formatISO } from 'date-fns';
 import { Icon, Card, DateSelect } from '../../Components';
 
 export const Profile = () => {
+  const [auth, setAuth] = useLocalStorage('auth', {});
   const [currentDate, setDate] = React.useState(
     formatISO(new Date(2022, 10, 20)),
   );
-  const [auth, setAuth] = useLocalStorage('auth', {});
+
+  const [hunches, fetchHunches] = useAsyncFn(async () => {
+    const res = await axios({
+      method: 'get',
+      baseURL: 'http://localhost:3000',
+      url: `/${auth.user.username}`,
+    });
+
+    const hunches = res.data.reduce((acc, hunch) => {
+      acc[hunch.gameId] = hunch;
+      return acc;
+    }, {});
+
+    return hunches;
+  });
+
+  const [games, fetchGames] = useAsyncFn(async (params) => {
+    const res = await axios({
+      method: 'get',
+      baseURL: 'http://localhost:3000',
+      url: '/game',
+      params,
+    });
+
+    return res.data;
+  });
+
+  React.useEffect(() => {
+    fetchHunches();
+  }, []);
+
+  React.useEffect(() => {
+    fetchGames({ gameTime: currentDate });
+  }, [currentDate]);
 
   if (!auth?.user?.id) {
     return <Navigate to="/" replace={true} />;
   }
 
-  const logout = () => {
-    setAuth({});
-  };
+  const isLoading = games.loading || hunches.loading;
+  const hasError = games.error || hunches.error;
+  const isDone = !isLoading && !hasError;
+
   return (
     <>
       <header className="bg-red-500 text-white p-4">
         <div className="container max-w-4xl flex justify-between items-center">
           <h1 className="text-white text-xl font-bold">CupGuesser</h1>
-          <div onClick={logout} className="p-4 cursor-pointer">
+          <div
+            onClick={() => {
+              setAuth({});
+            }}
+            className="p-4 cursor-pointer"
+          >
             Sair
           </div>
         </div>
@@ -34,7 +75,7 @@ export const Profile = () => {
             <a href="./dashboard">
               <Icon name="back" className="w-8" />
             </a>
-            <h3 className="text-2xl">Victor Alexandre</h3>
+            <h3 className="text-2xl">{auth.user.name}</h3>
           </div>
         </section>
 
@@ -44,7 +85,22 @@ export const Profile = () => {
           <DateSelect currentDate={currentDate} onChange={setDate} />
 
           <div className="space-y-4">
-            <Card homeTeam={'sui'} awayTeam={'cam'} gamTime={'7:00'} />
+            {isLoading && 'Carregando...'}
+            {hasError && 'Ops, algo deu errado.'}
+
+            {isDone &&
+              games.value?.map((game) => (
+                <Card
+                  key={game.id}
+                  gameId={game.id}
+                  homeTeam={game.homeTeam}
+                  awayTeam={game.awayTeam}
+                  gameTime={format(new Date(game.gameTime), 'H:mm')}
+                  homeTeamScore={hunches.value?.[game.id]?.homeTeamScore || ''}
+                  awayTeamScore={hunches.value?.[game.id]?.awayTeamScore || ''}
+                  disabled={true}
+                />
+              ))}
           </div>
         </section>
       </main>

@@ -11,6 +11,21 @@ export const Dashboard = () => {
   );
   const [auth] = useLocalStorage('auth', {});
 
+  const [hunches, fetchHunches] = useAsyncFn(async () => {
+    const res = await axios({
+      method: 'get',
+      baseURL: 'http://localhost:3000',
+      url: `/${auth.user.username}`,
+    });
+
+    const hunches = res.data.reduce((acc, hunch) => {
+      acc[hunch.gameId] = hunch;
+      return acc;
+    }, {});
+
+    return hunches;
+  });
+
   const [games, fetchGames] = useAsyncFn(async (params) => {
     const res = await axios({
       method: 'get',
@@ -23,12 +38,20 @@ export const Dashboard = () => {
   });
 
   React.useEffect(() => {
+    fetchHunches();
+  }, []);
+
+  React.useEffect(() => {
     fetchGames({ gameTime: currentDate });
   }, [currentDate]);
 
   if (!auth?.user?.id) {
     return <Navigate to="/" replace={true} />;
   }
+
+  const isLoading = games.loading || hunches.loading;
+  const hasError = games.error || hunches.error;
+  const isDone = !isLoading && !hasError;
 
   return (
     <>
@@ -44,7 +67,7 @@ export const Dashboard = () => {
       <main className="space-y-6">
         <section id="header" className="bg-red-500 text-white">
           <div className="container max-w-4xl space-y-2 p-4">
-            <span>Olá Victor!</span>
+            <span>Olá {auth.user.username}</span>
             <h3 className="text-2xl">Qual é o seu palpite?</h3>
           </div>
         </section>
@@ -53,10 +76,10 @@ export const Dashboard = () => {
           <DateSelect currentDate={currentDate} onChange={setDate} />
 
           <div className="space-y-4">
-            {games.loading && 'Carregando...'}
-            {games.error && 'Ops, algo deu errado.'}
-            {!games.loading &&
-              !games.error &&
+            {isLoading && 'Carregando...'}
+            {hasError && 'Ops, algo deu errado.'}
+
+            {isDone &&
               games.value?.map((game) => (
                 <Card
                   key={game.id}
@@ -64,6 +87,8 @@ export const Dashboard = () => {
                   homeTeam={game.homeTeam}
                   awayTeam={game.awayTeam}
                   gameTime={format(new Date(game.gameTime), 'H:mm')}
+                  homeTeamScore={hunches.value?.[game.id]?.homeTeamScore || ''}
+                  awayTeamScore={hunches.value?.[game.id]?.awayTeamScore || ''}
                 />
               ))}
           </div>

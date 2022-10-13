@@ -3,7 +3,15 @@ import { useLocalStorage } from 'react-use';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-export const Card = ({ homeTeam, awayTeam, gameTime, gameId }) => {
+export const Card = ({
+  disabled,
+  homeTeam,
+  awayTeam,
+  gameTime,
+  gameId,
+  homeTeamScore,
+  awayTeamScore,
+}) => {
   const [auth] = useLocalStorage('auth');
 
   const validationSchema = yup.object().shape({
@@ -27,8 +35,8 @@ export const Card = ({ homeTeam, awayTeam, gameTime, gameId }) => {
       });
     },
     initialValues: {
-      homeTeamScore: '',
-      awayTeamScore: '',
+      homeTeamScore,
+      awayTeamScore,
     },
     validationSchema,
   });
@@ -51,6 +59,7 @@ export const Card = ({ homeTeam, awayTeam, gameTime, gameId }) => {
           value={formik.values.homeTeamScore}
           onChange={formik.handleChange}
           onBlur={formik.handleSubmit}
+          disabled={disabled}
         />
         <span className="mx-4 text-red-500 font-bold">x</span>
         <input
@@ -62,6 +71,7 @@ export const Card = ({ homeTeam, awayTeam, gameTime, gameId }) => {
           value={formik.values.awayTeamScore}
           onChange={formik.handleChange}
           onBlur={formik.handleSubmit}
+          disabled={disabled}
         />
 
         <img src={`/assets-natrave/bandeiras/${awayTeam}.png`} alt="" />
