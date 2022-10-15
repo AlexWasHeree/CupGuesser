@@ -13,4 +13,4 @@ router.post('/hunches', hunches.create);
 
 router.get('/game', games.list);
 
-router.get('/:username', hunches.list);
+router.get('/:username', users.hunches);

@@ -11,25 +11,30 @@ export const Dashboard = () => {
   );
   const [auth] = useLocalStorage('auth', {});
 
-  const [hunches, fetchHunches] = useAsyncFn(async () => {
-    const res = await axios({
-      method: 'get',
-      baseURL: 'http://localhost:3000',
-      url: `/${auth.user.username}`,
-    });
+  const [{ value: user, loading, error }, fetchHunches] = useAsyncFn(
+    async () => {
+      const res = await axios({
+        method: 'get',
+        baseURL: import.meta.env.VITE_API_URL,
+        url: `/${auth.user.username}`,
+      });
 
-    const hunches = res.data.reduce((acc, hunch) => {
-      acc[hunch.gameId] = hunch;
-      return acc;
-    }, {});
+      const hunches = res.data.hunches.reduce((acc, hunch) => {
+        acc[hunch.gameId] = hunch;
+        return acc;
+      }, {});
 
-    return hunches;
-  });
+      return {
+        ...res.data,
+        hunches,
+      };
+    },
+  );
 
   const [games, fetchGames] = useAsyncFn(async (params) => {
     const res = await axios({
       method: 'get',
-      baseURL: 'http://localhost:3000',
+      baseURL: import.meta.env.VITE_API_URL,
       url: '/game',
       params,
     });
@@ -49,8 +54,8 @@ export const Dashboard = () => {
     return <Navigate to="/" replace={true} />;
   }
 
-  const isLoading = games.loading || hunches.loading;
-  const hasError = games.error || hunches.error;
+  const isLoading = games.loading || loading;
+  const hasError = games.error || error;
   const isDone = !isLoading && !hasError;
 
   return (
@@ -58,7 +63,7 @@ export const Dashboard = () => {
       <header className="bg-red-500 text-white p-4">
         <div className="container max-w-4xl flex justify-between items-center">
           <h1 className="text-white text-xl font-bold">CupGuesser</h1>
-          <a href="/profile">
+          <a href={`/${auth.user?.username}`}>
             <Icon name="profile" className="w-10 " />
           </a>
         </div>
@@ -87,8 +92,8 @@ export const Dashboard = () => {
                   homeTeam={game.homeTeam}
                   awayTeam={game.awayTeam}
                   gameTime={format(new Date(game.gameTime), 'H:mm')}
-                  homeTeamScore={hunches.value?.[game.id]?.homeTeamScore || ''}
-                  awayTeamScore={hunches.value?.[game.id]?.awayTeamScore || ''}
+                  homeTeamScore={user?.hunches?.[game.id]?.homeTeamScore || ''}
+                  awayTeamScore={user?.hunches?.[game.id]?.awayTeamScore || ''}
                 />
               ))}
           </div>
